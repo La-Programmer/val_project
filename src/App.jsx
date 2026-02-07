@@ -1,55 +1,44 @@
-// eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
-import heart from './assets/heart.svg';
-import reasons from './Components/Reasons';
-import Card from './Components/Card';
+import { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router';
+import Home from './pages/Home';
+import MessagePage from './pages/Message';
+import AppLayout from './layouts/AppLayout';
+import SlideShow from './pages/SlideShow';
+
 
 function App() {
-  const messages = reasons.map((reason) => {
-    return <Card reason={reason} />;
-  });
+  const [data, setData] = useState({});
 
-  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    const fetchValentineData = async () => 
+    {
+      const result = await fetch('/data.json')
+        .then(res => res.json())
+        .then(data => data.valentines);
 
-  const handleNext = () => {
-    if (index < messages.length - 1) {
-      setIndex(index + 1);
+        setData(result);
     }
-  };
+    fetchValentineData();
+  }, [])
 
-  const handlePrev = () => {
-    if (index > 0) {
-      setIndex(index - 1);
-    }
-  };
+  const getSlides = () => {
+    const captions = data?.reasons.slice(0, 5);  
+
+    return captions.map((caption, i) => ({
+      image: `https://picsum.photos/seed/val-${i}/800/1000`,
+      caption,
+    }));
+  }
+  
+  console.log(data)
   return (
-    <>
-      <section className='m-2 p-4 bg-pink-300 rounded-md shadow-md'>
-        <img
-          src={heart}
-          alt='My heart beats for you'
-          className='active:animate-ping duration-1000'
-        />
-        <h1 className='text-center text-2xl font-bold font-cursive italic text-red-600'>
-          Happy Valentine&apos;s Day my Baby Girl
-        </h1>
-      </section>
-      <section className='mt-12'>{messages[index]}</section>
-      <section className='grid grid-cols-2 gap-10 mt-8'>
-        <button
-          onClick={handlePrev}
-          className='bg-red-600 w-4/6 m-4 p-2 rounded-full text-white font-semibold shadow-md'
-        >
-          Prev
-        </button>
-        <button
-          onClick={handleNext}
-          className='bg-red-600 w-4/6 m-4 p-2 rounded-full text-white font-semibold shadow-md'
-        >
-          Next
-        </button>
-      </section>
-    </>
+    <AppLayout>
+      <Routes>
+        <Route path='/' element={<Home nickname={data?.recipient?.nickname}/>}></Route>
+        <Route path='/message' element={<MessagePage message={data?.message} />}></Route>
+        <Route path='/slideShow' element={<SlideShow nickname={data?.recipient?.nickname} getSlides={getSlides}/>}/>
+      </Routes>
+    </AppLayout>
   );
 }
 
