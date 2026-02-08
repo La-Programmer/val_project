@@ -25,7 +25,7 @@ function App() {
     const captions = data?.reasons.slice(0, 5);  
 
     return captions.map((caption, i) => ({
-      image: `https://picsum.photos/seed/val-${i}/800/1000`,
+      image: `/carousel-${i + 1}.jpg`,
       caption,
     }));
   }
