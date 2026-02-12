@@ -11,7 +11,7 @@ const Home = ({ nickname }: HomeProps) => {
   const navigate = useNavigate();
 
   const imageUrl =
-    "/dummy.jpg";
+    "/dummy.jpeg";
 
   return (
     <div className="flex flex-col items-center gap-6">
